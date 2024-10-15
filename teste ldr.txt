@@ -1,0 +1,19 @@
+const int ldrPin = 2;  // Pino digital D2 conectado ao D0 do módulo LDR
+
+void setup() {
+  pinMode(ldrPin, INPUT);  // Configura o pino como entrada
+  Serial.begin(9600);      // Inicializa a comunicação serial para monitoramento
+}
+
+void loop() {
+  int ldrState = digitalRead(ldrPin);  // Lê o estado digital do módulo LDR (D0)
+
+  // Ajusta a lógica para o comportamento específico do módulo
+  if (ldrState == LOW) {
+    Serial.println("Luz detectada");   // Luz está incidindo no LDR
+  } else {
+    Serial.println("Luz interrompida"); // Luz do laser foi interrompida
+  }
+
+  delay(200);  // Pequeno atraso para leitura confortável no monitor serial
+}

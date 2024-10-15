@@ -1,0 +1,25 @@
+const int ldrPin = 2;       // Pino digital D2 conectado ao D0 do módulo LDR
+const int relayPin = 8;     // Pino digital D8 conectado ao módulo Relé
+
+void setup() {
+  pinMode(ldrPin, INPUT);    // Configura o pino do LDR como entrada
+  pinMode(relayPin, OUTPUT); // Configura o pino do relé como saída
+  Serial.begin(9600);        // Inicializa a comunicação serial para monitoramento
+
+  digitalWrite(relayPin, HIGH); // Garante que o relé começa desligado (inativo)
+}
+
+void loop() {
+  int ldrState = digitalRead(ldrPin);  // Lê o estado digital do módulo LDR (D0)
+
+  // Ajusta a lógica para o comportamento específico do módulo
+  if (ldrState == LOW) {
+    Serial.println("Luz detectada");     // Luz está incidindo no LDR
+    digitalWrite(relayPin, HIGH);        // Relé desligado (alarme inativo)
+  } else {
+    Serial.println("Luz interrompida");  // Luz do laser foi interrompida
+    digitalWrite(relayPin, LOW);         // Ativa o relé (alarme ligado)
+  }
+
+  delay(200);  // Pequeno atraso para leitura confortável no monitor serial
+}

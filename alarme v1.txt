@@ -1,0 +1,42 @@
+const int ldrPin = 2;       // Pino digital D2 conectado ao D0 do módulo LDR
+const int relayPin = 8;     // Pino digital D8 conectado ao módulo Relé
+const int buttonPin = 7;    // Pino digital D7 conectado ao botão
+
+bool alarmTriggered = false;  // Variável para monitorar o estado do alarme
+
+void setup() {
+  pinMode(ldrPin, INPUT);         // Configura o pino do LDR como entrada
+  pinMode(relayPin, OUTPUT);      // Configura o pino do relé como saída
+  pinMode(buttonPin, INPUT_PULLUP); // Configura o botão como entrada com pull-up interno
+  Serial.begin(9600);             // Inicializa a comunicação serial para monitoramento
+
+  digitalWrite(relayPin, HIGH);   // Garante que o relé começa desligado
+}
+
+void loop() {
+  int ldrState = digitalRead(ldrPin);  // Lê o estado digital do módulo LDR (D0)
+  int buttonState = digitalRead(buttonPin);  // Lê o estado do botão
+
+  // Se o alarme não foi disparado e a luz do laser foi interrompida
+  if (!alarmTriggered && ldrState == HIGH) {
+    Serial.println("Luz interrompida - Alarme disparado!");
+    digitalWrite(relayPin, LOW);        // Liga o relé (alarme disparado)
+    alarmTriggered = true;              // Marca o alarme como disparado
+  }
+
+  // Se o botão for pressionado, desativa o alarme e reinicia o sistema
+  if (alarmTriggered && buttonState == LOW) {
+    Serial.println("Botão pressionado - Alarme desarmado e sistema reiniciado.");
+    digitalWrite(relayPin, HIGH);       // Desliga o relé (alarme desarmado)
+    alarmTriggered = false;             // Reseta a variável para permitir um novo ciclo
+    delay(500);                         // Pequeno atraso para evitar múltiplas leituras do botão
+  }
+
+  // Exibe o estado atual para monitoramento
+  if (!alarmTriggered) {
+    Serial.println("Luz detectada - Sistema aguardando interrupção.");
+    digitalWrite(relayPin, HIGH);       // Garante que o relé está desligado enquanto o sistema está aguardando
+  }
+
+  delay(200);  // Pequeno atraso para leitura confortável no monitor serial
+}
